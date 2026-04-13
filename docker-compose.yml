@@ -1,0 +1,118 @@
+# ============================================================
+# Matt // Classified — docker-compose.yml
+#
+# Security model:
+#   - Internal bridge network: app ↔ redis only.
+#   - Redis port is NOT exposed to the host.
+#   - app is bound to 127.0.0.1:8000 — nginx on the host
+#     proxies to it; no direct internet access.
+#   - Both containers: read-only FS, dropped caps,
+#     no-new-privileges, unprivileged user.
+# ============================================================
+
+name: matt-classified
+
+services:
+
+  # ----------------------------------------------------------
+  # Redis — in-memory only, no persistence
+  # ----------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+    # Run as the redis user bundled in the alpine image (uid 999 / gid 1000).
+    user: "999:1000"
+
+    env_file:
+      - .env
+
+    # Disable persistence entirely; data lives only in RAM.
+    # maxmemory-policy: evict any key on overflow (all data is transient).
+    # --requirepass: defense-in-depth in case internal:true is accidentally
+    # removed or a ports: mapping is added during experiments.
+    command: >
+      redis-server
+      --appendonly no
+      --save ""
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --bind 0.0.0.0
+      --protected-mode no
+      --requirepass ${REDIS_PASSWORD}
+
+    # Read-only root FS; /data as tmpfs (Redis scratch dir).
+    read_only: true
+    tmpfs:
+      - /data:size=64m,noexec,nosuid,nodev
+
+    # No capabilities needed for a plain Redis server.
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 320m   # 256 MB Redis + OS overhead
+
+    # Only reachable by containers on the internal network.
+    # No ports: block — Redis is never exposed to the host.
+    networks:
+      - internal
+
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  # ----------------------------------------------------------
+  # App — FastAPI + uvicorn
+  # ----------------------------------------------------------
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+
+    # Bind only to loopback — nginx on the host connects here.
+    # Internet → nginx (host) → 127.0.0.1:8000 → app container.
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    env_file:
+      - .env
+
+    # Read-only root FS.
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid,nodev
+
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 256m
+    cpus: "0.5"
+
+    networks:
+      - internal
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')\""]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+# ----------------------------------------------------------
+# Network — internal bridge, not accessible from outside
+# ----------------------------------------------------------
+networks:
+  internal:
+    driver: bridge

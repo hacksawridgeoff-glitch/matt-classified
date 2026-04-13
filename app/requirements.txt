@@ -1,0 +1,13 @@
+# Matt // Classified — Python dependencies
+# Pinned for reproducibility. Update intentionally, not automatically.
+
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+redis==5.2.1
+pydantic==2.10.4
+python-dotenv==1.0.1
+
+# Dev / test only (not installed in Docker image)
+# fakeredis==2.x
+# pytest==9.x
+# httpx==0.x

@@ -1,0 +1,839 @@
+/* ============================================================
+   Matt // Classified — styles.css
+   Design tokens → reset → layout → components
+   No external CDN. No inline scripts. CSP: script-src 'self'.
+   ============================================================ */
+
+/* ---- Design tokens ---------------------------------------- */
+:root {
+  --bg:            #1f1f1e;
+  --bg-elevated:   #2a2a29;
+  --bg-subtle:     #333332;
+  --accent:        #2f8f6f;
+  --accent-hover:  #36a380;
+  --accent-muted:  #1e5a46;
+  --text:          #f2f2f0;
+  --text-muted:    #9a9a98;
+  --text-faint:    #6b6b6a;
+  --danger:        #c05050;
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     14px;
+  --shadow-float:  0 4px 12px rgba(0,0,0,0.35);
+  --font:          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono:     ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Spec-requested shadow variants */
+  --shadow-card:    0 2px 8px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.15);
+  --shadow-fab:     0 4px 16px rgba(0,0,0,0.4),  0 2px 4px  rgba(0,0,0,0.3);
+  --shadow-primary: 0 4px 12px rgba(47,143,111,0.3), 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ---- Reset ------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  height: 100%;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(47,143,111,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse at top, #2a2a29 0%, #1f1f1e 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22'><circle cx='4' cy='4' r='4' fill='%23ffffff' fill-opacity='0.15'/></svg>");
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a { color: inherit; }
+
+/* ---- Layout ----------------------------------------------- */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 600px) {
+  .container { padding: 0 24px; }
+}
+
+/* ---- Header ----------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 56px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--bg-subtle);
+}
+
+.site-header .container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-logo {
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: none;
+  user-select: none;
+}
+
+.site-logo .logo-matt    { color: var(--text); }
+.site-logo .logo-slash   { color: var(--accent); }
+
+/* Help button — "Почему это безопасно" + ? в шапке */
+.help-btn-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: opacity 0.15s;
+}
+
+.help-btn-wrap:hover  { opacity: 0.8; }
+.help-btn-wrap:focus-visible { outline: 2px solid var(--accent); border-radius: var(--radius-sm); outline-offset: 2px; }
+
+.help-btn-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.help-btn-wrap:hover .help-btn-label { color: var(--text); }
+
+.help-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--bg-subtle);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+  /* standalone fallback (view page) */
+  background: none;
+  cursor: pointer;
+}
+
+.help-btn:hover,
+.help-btn:focus-visible {
+  border-color: var(--text-muted);
+  color: var(--text);
+  outline: none;
+}
+
+.help-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.help-btn-wrap:focus-visible .help-btn { border-color: var(--accent); color: var(--text); }
+
+/* ---- Main content ----------------------------------------- */
+.main-content {
+  flex: 1;
+  padding: 24px 0 32px;
+}
+
+/* ---- Footer ----------------------------------------------- */
+.site-footer {
+  padding: 24px 16px;
+  font-size: 13px;
+  color: var(--text-faint);
+  margin-top: auto;
+  border-top: 1px solid var(--bg-subtle);
+}
+
+.footer-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-links a {
+  color: var(--text-faint);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer-links a:hover { color: var(--text-muted); }
+
+@media (min-width: 600px) {
+  .footer-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+/* ---- Cards / elevated containers -------------------------- */
+.card {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---- Textarea wrapper ------------------------------------- */
+.textarea-wrapper {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* textarea-header удалена — inline-ссылка убрана из дизайна */
+
+#note-textarea {
+  display: block;
+  width: 100%;
+  /*
+   * Mobile keyboard fix: используем фиксированную высоту вместо 100vh,
+   * чтобы textarea не прыгала при открытии виртуальной клавиатуры.
+   * Кнопки (fixed) перемещаются сами, т.к. они position:fixed.
+   */
+  min-height: 320px;
+  height: 320px;
+  padding: 16px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  caret-color: var(--accent);
+  /* Не привязываем высоту к viewport — клавиатура его меняет */
+}
+
+#note-textarea::placeholder { color: var(--text-faint); }
+
+@media (min-width: 600px) {
+  #note-textarea {
+    min-height: 400px;
+    height: auto;
+    resize: vertical;
+  }
+}
+
+.char-counter {
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: right;
+  padding: 6px 16px 12px;
+  user-select: none;
+}
+
+.char-counter.over-limit { color: var(--danger); }
+
+/* ---- Action bar (под textarea) ---------------------------- */
+/*
+ * Больше не floating — располагается в потоке документа
+ * прямо под полем ввода, в том же контейнере.
+ */
+.fab-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0 0;
+}
+
+.fab-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fab {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--bg-subtle);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.fab:hover,
+.fab:focus-visible {
+  background: var(--bg-subtle);
+  outline: none;
+}
+
+.fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.fab.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.fab-badge {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.4;
+}
+
+/* Разделитель между FABs и кнопкой «создать» */
+.fab-spacer {
+  flex: 1;
+}
+
+/* ---- Primary create button -------------------------------- */
+.btn-create {
+  /* В потоке, справа от FABs через fab-spacer */
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-primary);
+  transition: background 0.15s, box-shadow 0.15s, opacity 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-create:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: 0 6px 16px rgba(47,143,111,0.4), 0 2px 4px rgba(0,0,0,0.25);
+}
+
+.btn-create:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.btn-create:disabled {
+  background: var(--accent-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+/* ---- Generic buttons -------------------------------------- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-primary);
+  transition: background 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--bg-subtle);
+  transition: background 0.15s, border-color 0.15s;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-subtle);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---- Spinner ---------------------------------------------- */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Result card ------------------------------------------ */
+.result-section { display: flex; flex-direction: column; gap: 16px; }
+
+.result-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: center;
+  width: 100%;
+}
+
+.warning-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent-muted);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  box-shadow: var(--shadow-card);
+}
+
+.warning-box strong { color: var(--text); }
+
+.link-box {
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link-url {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  word-break: break-all;
+  line-height: 1.5;
+  user-select: all;
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .result-actions {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .result-actions .btn-primary,
+  .result-actions .btn-secondary {
+    flex: 1;
+  }
+}
+
+/* ---- Error inline ----------------------------------------- */
+.inline-error {
+  font-size: 14px;
+  color: var(--danger);
+  padding: 8px 0;
+}
+
+/* ---- View page: initial card ------------------------------ */
+.view-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 40px 24px;
+}
+
+.view-card .icon-lock,
+.view-card .icon-empty {
+  color: var(--text-muted);
+  width: 48px;
+  height: 48px;
+}
+
+.view-card-title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.view-card-body {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.view-card-hint {
+  font-size: 13px;
+  color: var(--text-faint);
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+/* ---- Note content block ----------------------------------- */
+.note-content-block {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.note-text {
+  font-size: 16px;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+
+/* ---- Password prompt -------------------------------------- */
+.password-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.password-prompt-title {
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--bg-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input-field::placeholder { color: var(--text-faint); }
+
+.input-field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47,143,111,0.15);
+}
+
+/* ---- Overlay + Modal -------------------------------------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;  /* bottom sheet default on mobile */
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Bottom sheet (mobile) */
+.sheet {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 20px;
+  width: 100%;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.overlay.open .sheet {
+  transform: translateY(0);
+}
+
+/* Desktop: centered modal */
+@media (min-width: 600px) {
+  .overlay { align-items: center; }
+
+  .sheet {
+    border-radius: var(--radius-lg);
+    max-width: 560px;
+    transform: scale(0.98);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+    opacity: 0;
+  }
+
+  .overlay.open .sheet {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Handle bar */
+.sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--bg-subtle);
+  border-radius: 999px;
+  margin: 0 auto 16px;
+}
+
+@media (min-width: 600px) {
+  .sheet-handle { display: none; }
+}
+
+/* Sheet header */
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.sheet-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.sheet-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sheet-close:hover { background: var(--bg-subtle); color: var(--text); }
+.sheet-close:focus-visible { outline: 2px solid var(--accent); }
+
+/* ---- TTL sheet -------------------------------------------- */
+.ttl-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ttl-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.12s;
+  font-size: 15px;
+}
+
+.ttl-option:hover { background: var(--bg-subtle); }
+
+.ttl-option input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--bg-subtle);
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+
+.ttl-option input[type="radio"]:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: inset 0 0 0 3px var(--bg-elevated);
+}
+
+.ttl-option input[type="radio"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- Password sheet --------------------------------------- */
+.password-sheet-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.btn-remove-password {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  color: var(--danger);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-remove-password:hover { background: rgba(192,80,80,0.08); }
+.btn-remove-password:focus-visible { outline: 2px solid var(--danger); }
+
+/* ---- Safety modal content --------------------------------- */
+.safety-content {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.safety-content h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.safety-content h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 16px 0 8px;
+}
+
+.safety-content ol {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.safety-content p { margin-bottom: 8px; }
+
+.safety-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.safety-content code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--bg-subtle);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+}
+
+/* ---- Fade transition for state changes -------------------- */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Utility ---------------------------------------------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus-visible global */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

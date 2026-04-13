@@ -1,0 +1,22 @@
+# Development and test artefacts — never go into the image
+tests/
+.env
+*.env
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.git/
+.gitignore
+
+# Dev helpers
+storage_fake.py
+requirements-dev.txt
+pytest.ini
+
+# Editor / OS noise
+.DS_Store
+*.swp
+*.swo
